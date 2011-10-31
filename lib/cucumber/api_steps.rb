@@ -2,9 +2,17 @@ require 'jsonpath'
 
 World(Rack::Test::Methods)
 
-Given /^I send and accept (XML|JSON)$/ do |type|
+Given /^I accept (XML|JSON)$/ do |type|
   page.driver.header 'Accept', "application/#{type.downcase}"
+end
+
+Given /^I send (XML|JSON)$/ do |type|
   page.driver.header 'Content-Type', "application/#{type.downcase}"
+end
+
+Given /^I send and accept (XML|JSON)$/ do |type|
+  Given "I accept #{type}"
+  Given "I send #{type}"
 end
 
 When /^I authenticate as the user "([^"]*)" with the password "([^"]*)"$/ do |user, pass|
