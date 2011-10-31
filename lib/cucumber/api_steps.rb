@@ -11,8 +11,8 @@ Given /^I send (XML|JSON)$/ do |type|
 end
 
 Given /^I send and accept (XML|JSON)$/ do |type|
-  Given "I accept #{type}"
-  Given "I send #{type}"
+  step "I accept #{type}"
+  step "I send #{type}"
 end
 
 When /^I authenticate as the user "([^"]*)" with the password "([^"]*)"$/ do |user, pass|
@@ -29,19 +29,18 @@ When /^I authenticate as the user "([^"]*)" with the password "([^"]*)"$/ do |us
   end
 end
 
-When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the following:)?$/ do |args|
-  request_type = args.shift
-  path = args.shift
-  body = args.shift
+When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the following:)?$/ do |request_type, path, *body|
   if body.present?
-    page.driver.send(request_type.downcase.to_sym, path, body)
+    page.driver.send(request_type.downcase.to_sym, path, body.first)
   else
     page.driver.send(request_type.downcase.to_sym, path)
   end
 end
 
 Then /^show me the response$/ do
-  p page.driver.response
+  p "Status: #{page.driver.response.status}"
+  p page.driver.response.body
+  
 end
 
 Then /^the response status should be "([^"]*)"$/ do |status|
@@ -83,18 +82,17 @@ Then /^the XML response should have "([^"]*)" with the text "([^"]*)"$/ do |xpat
 end
 
 Given /^I authenticate using "([^"]*)" \/ "([^"]*)"$/ do |arg1, arg2|
-  Given "I authenticate as the user \"#{arg1}\" with the password \"#{arg2}\""
+  step "I authenticate as the user \"#{arg1}\" with the password \"#{arg2}\""
 end
 
 Then /^what$/ do
-  Then "show me the response"
+  step "show me the response"
 end
 
 Then /^the JSON response should be an object with keys:?$/ do |table|
   keys = table.column_names
-  # page = JSON.parse(page.driver.response.body)
-  page = JSON.parse(page.driver.response.body)
+  json = JSON.parse(page.driver.response.body)
   keys.each do|key|
-    page.should include(key)
+    json.should include(key)
   end
 end
