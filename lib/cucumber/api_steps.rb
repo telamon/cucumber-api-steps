@@ -21,7 +21,7 @@ When /^I authenticate as the user "([^"]*)" with the password "([^"]*)"$/ do |us
   end
 end
 
-When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the following:)?$/ do |*args|
+When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the following:)?$/ do |args|
   request_type = args.shift
   path = args.shift
   body = args.shift
@@ -74,3 +74,19 @@ Then /^the XML response should have "([^"]*)" with the text "([^"]*)"$/ do |xpat
   end
 end
 
+Given /^I authenticate using "([^"]*)" \/ "([^"]*)"$/ do |arg1, arg2|
+  Given "I authenticate as the user \"#{arg1}\" with the password \"#{arg2}\""
+end
+
+Then /^what$/ do
+  Then "show me the response"
+end
+
+Then /^the JSON response should be an object with keys:?$/ do |table|
+  keys = table.column_names
+  # page = JSON.parse(page.driver.response.body)
+  page = JSON.parse(page.driver.response.body)
+  keys.each do|key|
+    page.should include(key)
+  end
+end
