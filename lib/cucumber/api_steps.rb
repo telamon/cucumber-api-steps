@@ -38,12 +38,17 @@ When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the f
 end
 
 Then /^show me the response$/ do
-  p "Status: #{page.driver.response.status}"
-  p page.driver.response.body
-  
+  p "Status: #{page.driver.response.status} (#{Rack::Utils::HTTP_STATUS_CODES[page.driver.response.status]})"
+  b = page.driver.response.body
+  b = JSON.pretty_generate(JSON.parse(b)) if page.driver.response.headers['Content-Type'].match 'json'
+  print b
 end
 
 Then /^the response status should be "([^"]*)"$/ do |status|
+  if status.match /\D/
+    reverse= Hash[Rack::Utils::HTTP_STATUS_CODES.map{|k,v| [v.downcase,k]}]
+    status = reverse[status.downcase] if reverse[status.downcase]
+  end
   if page.respond_to? :should
     page.driver.response.status.should == status.to_i
   else
@@ -85,7 +90,7 @@ Given /^I authenticate using "([^"]*)" \/ "([^"]*)"$/ do |arg1, arg2|
   step "I authenticate as the user \"#{arg1}\" with the password \"#{arg2}\""
 end
 
-Then /^what$/ do
+Then /^what\??$/ do
   step "show me the response"
 end
 
