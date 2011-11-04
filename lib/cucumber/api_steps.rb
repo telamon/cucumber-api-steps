@@ -14,6 +14,9 @@ Given /^I send and accept (XML|JSON)$/ do |type|
   step "I accept #{type}"
   step "I send #{type}"
 end
+Given /^header "([^"]*)" is set to "([^"]*)"$/ do |arg1, arg2|
+  page.driver.header arg1, arg2
+end
 
 When /^I authenticate as the user "([^"]*)" with the password "([^"]*)"$/ do |user, pass|
   if page.driver.respond_to?(:basic_auth)
@@ -30,13 +33,30 @@ When /^I authenticate as the user "([^"]*)" with the password "([^"]*)"$/ do |us
 end
 
 When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the following:)?$/ do |request_type, path, *body|
+
+  path.gsub!(/:(?:([a-zA-Z_]+)_)?id/) do |m|
+    klass = $1
+    if klass 
+       eval("@#{klass}.try(:id).to_s") || m
+    else
+       @id || m
+    end
+  end
+
   if body.present?
-    page.driver.send(request_type.downcase.to_sym, path, body.first)
+    rbody = ERB.new(body.first).result(binding)
+    page.driver.send(request_type.downcase.to_sym, path, rbody)
   else
     page.driver.send(request_type.downcase.to_sym, path)
   end
 end
-
+When /^deserialize the response$/ do 
+  if page.driver.response.headers['Content-Type'].match(/json/)
+    @response = JSON.parse(page.driver.response.body)
+  elsif page.driver.response.headers['Content-Type'].match(/xml/)
+    @response = Nokogiri::XML.parse(page.driver.response.body)
+  end
+end
 Then /^show me the response$/ do
   p "Status: #{page.driver.response.status} (#{Rack::Utils::HTTP_STATUS_CODES[page.driver.response.status]})"
   b = page.driver.response.body
@@ -54,6 +74,12 @@ Then /^the response status should be "([^"]*)"$/ do |status|
   else
     assert_equal status.to_i, page.driver.response.status
   end
+end
+
+Then /^the JSON response should be an array with "([^"]*)" elements$/ do |arg1|
+  json    = JSON.parse(page.driver.response.body)
+  json.is_a?(Array).should == true
+  json.count.should == arg1.to_i
 end
 
 Then /^the JSON response should (not)?\s?have "([^"]*)" with the text "([^"]*)"$/ do |negative, json_path, text|
