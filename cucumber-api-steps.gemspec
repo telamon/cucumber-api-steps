@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.name        = "cucumber-api-steps"
   s.version     = Cucumber::ApiSteps::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Jay Zeschin"]
-  s.email       = ["jay.zeschin@factorylabs.com"]
-  s.homepage    = "http://github.com/jayzes/cucumber-api-steps"
+  s.authors     = ["Jay Zeschin","Tony Ivanov"]
+  s.email       = ["jay.zeschin@factorylabs.com","telamohn@gmail.com"]
+  s.homepage    = "http://github.com/telamon/cucumber-api-steps"
   s.summary     = %q{Cucumber steps to easily test REST-based XML and JSON APIs}
   s.description = %q{Cucumber steps to easily test REST-based XML and JSON APIs}
   

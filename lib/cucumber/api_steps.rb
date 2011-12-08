@@ -64,6 +64,10 @@ Then /^show me the response$/ do
   print b
 end
 
+Then /^response header "([^"]*)" should be "([^"]*)"$/ do |arg1, arg2|
+  page.driver.response.headers[arg1].should == arg2
+end
+
 Then /^the response status should be "([^"]*)"$/ do |status|
   if status.match /\D/
     reverse= Hash[Rack::Utils::HTTP_STATUS_CODES.map{|k,v| [v.downcase,k]}]
