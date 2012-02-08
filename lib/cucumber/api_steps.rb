@@ -36,7 +36,7 @@ When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the f
 
   path.gsub!(/:(?:([a-zA-Z_]+)_)?id/) do |m|
     klass = $1
-    if klass 
+    if klass
        eval("@#{klass}.try(:id).to_s") || m
     else
        @id || m
@@ -50,7 +50,7 @@ When /^I send a (GET|POST|PUT|DELETE) request (?:for|to) "([^"]*)"(?: with the f
     page.driver.send(request_type.downcase.to_sym, path)
   end
 end
-When /^deserialize the response$/ do 
+When /^I deserialize the response$/ do
   if page.driver.response.headers['Content-Type'].match(/json/)
     @response = JSON.parse(page.driver.response.body)
   elsif page.driver.response.headers['Content-Type'].match(/xml/)
