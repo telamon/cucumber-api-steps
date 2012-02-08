@@ -92,6 +92,7 @@ Then /^the JSON response should( not)? have "([^"]*)" with the length "?(\d+)"?$
     results.count.should_not == n
   else
     results.count.should == n
+  end
 end
 
 Then /^the JSON response should (not)?\s?have "([^"]*)" with the text "([^"]*)"$/ do |negative, json_path, text|
