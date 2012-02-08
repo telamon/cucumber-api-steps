@@ -85,7 +85,7 @@ Then /^the JSON response should be an array with "([^"]*)" elements$/ do |arg1|
   json.is_a?(Array).should == true
   json.count.should == arg1.to_i
 end
-Then /^the JSON response should( not)? have "([^"]*)" with length of (\d+)$/ do |negative, json_path, n| #"
+Then /^the JSON response should( not)? have "([^"]*)" with the length "?(\d+)"?$/ do |negative, json_path, n| #"
   json    = JSON.parse(page.driver.response.body)
   results = JsonPath.new(json_path).on(json).to_a.map(&:to_s)  
   if negative.present?

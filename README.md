@@ -1,3 +1,12 @@
+	I'm not maintaing this branch, just hacking it to my own ends.
+	Please refer back to to [jayzes](https://github.com/jayzes/cucumber-api-steps)
+	for the original project.
+
+	In this branch I've: 
+	  * broken Test::Unit support
+	  * broken XML support
+	  * Added ambigious JSON tests.
+
 # Cucumber API Steps
 
 A set of [Cucumber](https://github.com/aslakhellesoy/cucumber) step definitions utilizing
